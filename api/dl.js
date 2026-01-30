@@ -1,4 +1,3 @@
-// api/dl.js
 const { webcrypto } = require('node:crypto');
 if (!globalThis.crypto) globalThis.crypto = webcrypto;
 
@@ -35,9 +34,7 @@ class ytdl {
         return a1;
     }
     isUrlValid(url) {
-        const ytRegex = /^(https?:\/\/)?(www\.)?(youtube\.com\/(embed\/|v\/|watch\?v=|watch\?.+&v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
-        const shortsRegex = /^(https?:\/\/)?(www\.)?(youtube\.com\/shorts\/)([a-zA-Z0-9_-]{11})/;
-        return ytRegex.test(url) || shortsRegex.test(url);
+        return url.includes('youtube.com') || url.includes('youtu.be');
     };
 
     async init(url, format) {
@@ -66,7 +63,7 @@ class ytdl {
     async process(url, type) {
         try {
             const sl = this.format[type]
-            if (!sl) return { status: false, msg: "Formats not found" };
+            if (!sl) return { status: false, msg: "Format invalid" };
             const init = await this.init(url, sl);
             if (init.le) return { status: false, msg: "Video too long (>30 min)" };
             if (init.e) return { status: false, msg: init.msg || "Error initiation" };
@@ -87,22 +84,29 @@ class ytdl {
     }
 }
 
-export default async function handler(req, res) {
+// HANDLER VERCEL
+module.exports = async (req, res) => {
+    // CORS Headers
     res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
     if (req.method === 'OPTIONS') return res.status(200).end();
-    if (req.method !== 'POST') return res.status(405).json({ error: 'Method Not Allowed' });
-
-    const { url, type } = req.body;
-    if (!url) return res.status(400).json({ error: 'URL Missing' });
+    
+    // Pastikan request method POST
+    if (req.method !== 'POST') {
+        return res.status(405).json({ error: 'Method Not Allowed' });
+    }
 
     try {
+        const { url, type } = req.body;
+        if (!url) return res.status(400).json({ error: 'URL Missing' });
+
         const dl = new ytdl();
         const result = await dl.process(url, type || 'mp3');
-        res.status(200).json(result);
+        
+        return res.status(200).json(result);
     } catch (error) {
-        res.status(500).json({ status: false, msg: error.message });
+        return res.status(500).json({ status: false, msg: error.message });
     }
-}
+};
