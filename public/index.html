@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Downloader</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="grid-bg"></div>
+
+    <div class="app-container">
+        
+        <div class="card main-card">
+            <div class="logo-area">
+                <i class="fa-brands fa-youtube logo-icon"></i>
+            </div>
+            <h1>YouTube <span class="highlight">Downloader</span></h1>
+            <p class="subtitle">High-quality MP3 & MP4 streaming & download</p>
+
+            <div class="input-wrapper">
+                <i class="fa-solid fa-link input-icon"></i>
+                <input type="text" id="urlInput" placeholder="Paste YouTube video link...">
+            </div>
+
+            <div class="format-selector">
+                <label class="radio-label">
+                    <input type="radio" name="format" value="mp3" checked>
+                    <span>MP3</span>
+                </label>
+                <label class="radio-label">
+                    <input type="radio" name="format" value="mp4">
+                    <span>MP4</span>
+                </label>
+            </div>
+
+            <button id="downloadBtn" onclick="processVideo()">
+                <i class="fa-solid fa-bolt"></i> Download Now
+            </button>
+
+            <div id="resultArea" class="result-area hidden">
+                <div class="loader hidden" id="loader"></div>
+                <div id="resultContent" class="hidden">
+                    <h3 id="videoTitle">Title</h3>
+                    <a id="dlButton" href="#" target="_blank" class="save-btn">
+                        <i class="fa-solid fa-download"></i> Save File
+                    </a>
+                </div>
+                <p id="statusText"></p>
+            </div>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-item">
+                <div class="f-icon"><i class="fa-solid fa-bolt"></i></div>
+                <span>SUPER FAST</span>
+            </div>
+            <div class="feature-item">
+                <div class="f-icon"><i class="fa-solid fa-shield-halved"></i></div>
+                <span>SECURE</span>
+            </div>
+            <div class="feature-item">
+                <div class="f-icon"><i class="fa-solid fa-star"></i></div>
+                <span>HIGH QUALITY</span>
+            </div>
+            <div class="feature-item">
+                <div class="f-icon"><i class="fa-solid fa-mobile-screen"></i></div>
+                <span>RESPONSIVE</span>
+            </div>
+        </div>
+
+        <div class="card guide-card">
+            <div class="guide-header">
+                <i class="fa-solid fa-book-open"></i> 
+                <h3>How to Use</h3>
+            </div>
+            <div class="step">
+                <div class="step-num">1</div>
+                <p>Open YouTube App & Copy Link</p>
+            </div>
+            <div class="step">
+                <div class="step-num">2</div>
+                <p>Paste Link in the box above</p>
+            </div>
+            <div class="step">
+                <div class="step-num">3</div>
+                <p>Click Download & Save File</p>
+            </div>
+        </div>
+
+        <footer>
+            SANN404 FORUM
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
