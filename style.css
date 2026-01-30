@@ -1,0 +1,205 @@
+:root {
+    --bg-color: #050505;
+    --card-bg: #0a0a0a;
+    --primary-blue: #00f0ff;
+    --dark-blue: #005f66;
+    --grid-line: #1a1a1a;
+    --text-color: #e0e0e0;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    position: relative;
+}
+
+/* Background Grid Effect */
+.grid-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        linear-gradient(var(--grid-line) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+    background-size: 40px 40px;
+    z-index: -1;
+    perspective: 500px;
+}
+
+.grid-bg::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, transparent 20%, var(--bg-color) 90%);
+}
+
+.container {
+    width: 100%;
+    max-width: 500px;
+    padding: 20px;
+    text-align: center;
+}
+
+h1 {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+    letter-spacing: 2px;
+    text-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
+}
+
+.blue-text {
+    color: var(--primary-blue);
+}
+
+.card {
+    background: rgba(10, 10, 10, 0.8);
+    border: 1px solid var(--primary-blue);
+    padding: 30px;
+    border-radius: 4px;
+    backdrop-filter: blur(5px);
+    box-shadow: 0 0 20px rgba(0, 240, 255, 0.1);
+    margin-top: 20px;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 15px;
+    background: #000;
+    border: 1px solid #333;
+    color: var(--primary-blue);
+    font-size: 1rem;
+    outline: none;
+    transition: 0.3s;
+}
+
+.input-group input:focus {
+    border-color: var(--primary-blue);
+    box-shadow: 0 0 10px rgba(0, 240, 255, 0.2);
+}
+
+.options {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin: 20px 0;
+}
+
+.radio-container {
+    cursor: pointer;
+    position: relative;
+    padding-left: 30px;
+    user-select: none;
+}
+
+.radio-container input {
+    display: none;
+}
+
+.checkmark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 20px;
+    width: 20px;
+    background-color: #000;
+    border: 1px solid var(--primary-blue);
+}
+
+.radio-container input:checked ~ .checkmark {
+    background-color: var(--primary-blue);
+}
+
+button {
+    width: 100%;
+    padding: 15px;
+    background: var(--primary-blue);
+    color: #000;
+    border: none;
+    font-weight: bold;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: 0.3s;
+    text-transform: uppercase;
+}
+
+button:hover {
+    background: #fff;
+    box-shadow: 0 0 15px var(--primary-blue);
+}
+
+button:disabled {
+    background: #333;
+    cursor: not-allowed;
+}
+
+/* Result & Status */
+.hidden { display: none; }
+
+.status-box { margin-top: 20px; }
+
+.result-box {
+    margin-top: 20px;
+    border-top: 1px solid #333;
+    padding-top: 20px;
+}
+
+.result-box h3 {
+    color: #fff;
+    font-size: 0.9rem;
+    margin-bottom: 15px;
+    word-break: break-all;
+}
+
+.download-btn {
+    display: inline-block;
+    padding: 10px 30px;
+    border: 1px solid var(--primary-blue);
+    color: var(--primary-blue);
+    text-decoration: none;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.download-btn:hover {
+    background: var(--primary-blue);
+    color: #000;
+}
+
+/* Loader Animation */
+.loader {
+    border: 3px solid #000;
+    border-top: 3px solid var(--primary-blue);
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 10px auto;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+footer {
+    margin-top: 30px;
+    font-size: 0.7rem;
+    color: #555;
+}
