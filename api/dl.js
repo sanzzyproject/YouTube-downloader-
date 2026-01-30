@@ -9,7 +9,7 @@ class ytdl {
             'referer': this.base + '#/jy/',
             'user-agent': 'Mozilla/5.0 (Android 15; Mobile; SM-F958; rv:130.0) Gecko/130.0 Firefox/130.0'
         };
-        this.p = [121, 50, 109, 97, 116, 101, 101, 46, 99, 111];
+        this.p = [121, 50, 109, 97, 116, 101, 101, 46, 99, 111]; // y2mate
         this.format = { "mp3": "0", "mp4": "1" };
         this.b();
     }
@@ -34,7 +34,8 @@ class ytdl {
         return a1;
     }
     isUrlValid(url) {
-        return url.includes('youtube.com') || url.includes('youtu.be');
+        // Validasi dasar URL YouTube
+        return (url.includes('youtube.com/') || url.includes('youtu.be/'));
     };
 
     async init(url, format) {
@@ -47,7 +48,7 @@ class ytdl {
                 body: JSON.stringify({ data: this.encodeDecode(url), format, referer: this.hr.referer })
             });
             return await response.json();
-        } catch (error) { throw new Error(error.message); }
+        } catch (error) { throw new Error("Source Init Failed: " + error.message); }
     };
     async check(id) {
         let p1 = this.ranHash(), p2 = this.ranHash();
@@ -58,27 +59,35 @@ class ytdl {
                 body: JSON.stringify({ data: id })
             });
             return await response.json();
-        } catch (error) { throw new Error(error.message); }
+        } catch (error) { throw new Error("Check Status Failed"); }
     };
     async process(url, type) {
         try {
             const sl = this.format[type]
             if (!sl) return { status: false, msg: "Format invalid" };
+            
             const init = await this.init(url, sl);
             if (init.le) return { status: false, msg: "Video too long (>30 min)" };
             if (init.e) return { status: false, msg: init.msg || "Error initiation" };
             
             let status = init, cached = 0;
+            // Loop menunggu konversi selesai
             while (status.s !== 'C' && status.e !== true) {
                 await new Promise(resolve => setTimeout(resolve, 2000));
                 status = await this.check(init.i);
-                if (++cached > 20) break; 
+                if (++cached > 20) break; // Timeout setelah 40 detik
             }
+            
             if (status.s === 'C') {
                 let p1 = this.ranHash(), p2 = this.ranHash();
-                return { status: true, type: type, title: status.t, dl: `${this.base}/${p1}/download/${status.i}/${p2}/` };
+                return { 
+                    status: true, 
+                    type: type, 
+                    title: status.t, 
+                    dl: `${this.base}/${p1}/download/${status.i}/${p2}/` 
+                };
             } else {
-                return { status: false, msg: "Timeout/Failed" };
+                return { status: false, msg: "Timeout/Failed to convert" };
             }
         } catch (error) { return { status: false, msg: error.message }; };
     }
@@ -86,27 +95,36 @@ class ytdl {
 
 // HANDLER VERCEL
 module.exports = async (req, res) => {
-    // CORS Headers
+    // CORS Headers Lengkap
+    res.setHeader('Access-Control-Allow-Credentials', true);
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    res.setHeader('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version');
 
-    if (req.method === 'OPTIONS') return res.status(200).end();
+    // Handle Preflight Request
+    if (req.method === 'OPTIONS') {
+        res.status(200).end();
+        return;
+    }
     
     // Pastikan request method POST
     if (req.method !== 'POST') {
-        return res.status(405).json({ error: 'Method Not Allowed' });
+        return res.status(405).json({ status: false, msg: 'Method Not Allowed' });
     }
 
     try {
         const { url, type } = req.body;
-        if (!url) return res.status(400).json({ error: 'URL Missing' });
+        
+        if (!url) {
+            return res.status(400).json({ status: false, msg: 'URL Missing' });
+        }
 
         const dl = new ytdl();
         const result = await dl.process(url, type || 'mp3');
         
-        return res.status(200).json(result);
+        res.status(200).json(result);
     } catch (error) {
-        return res.status(500).json({ status: false, msg: error.message });
+        console.error("Server Error:", error);
+        res.status(500).json({ status: false, msg: "Internal Server Error: " + error.message });
     }
 };
