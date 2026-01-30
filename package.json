@@ -1,8 +1,7 @@
 {
-  "name": "ytdl-web",
+  "name": "ytdl-fix",
   "version": "1.0.0",
   "scripts": {
     "start": "node api/dl.js"
-  },
-  "dependencies": {}
+  }
 }
