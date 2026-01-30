@@ -12,7 +12,11 @@ async function processVideo() {
     statusText.innerText = "";
     
     const url = urlInput.value.trim();
-    const type = document.querySelector('input[name="format"]:checked').value;
+    // Ambil format, default mp3 jika error
+    let type = 'mp3';
+    try {
+        type = document.querySelector('input[name="format"]:checked').value;
+    } catch(e) {}
 
     if (!url) {
         alert("Please paste a YouTube link!");
@@ -29,17 +33,20 @@ async function processVideo() {
     statusText.style.color = "#b3b3b3";
 
     try {
-        // PENTING: Arahkan fetch ke /api/dl
+        // Fetch ke API
         const response = await fetch('/api/dl', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ url, type })
         });
 
-        // Cek apakah server mengembalikan HTML (Error 404/500 biasanya HTML)
+        // Cek Content Type untuk menghindari error JSON parse pada HTML (404/500)
         const contentType = response.headers.get("content-type");
-        if (contentType && contentType.indexOf("application/json") === -1) {
-            throw new Error("Server Error: API not configured correctly in vercel.json");
+        if (!contentType || contentType.indexOf("application/json") === -1) {
+            // Jika server mengembalikan HTML (Error page), kita baca text-nya
+            const text = await response.text();
+            console.error("Server Response (Not JSON):", text);
+            throw new Error("Server Error (API Route Not Found or Crash). Check Console.");
         }
 
         const data = await response.json();
@@ -47,7 +54,7 @@ async function processVideo() {
 
         if (data.status) {
             resultContent.classList.remove('hidden');
-            document.getElementById('videoTitle').innerText = data.title;
+            document.getElementById('videoTitle').innerText = data.title || "Download Ready";
             document.getElementById('dlButton').href = data.dl;
             statusText.innerText = "Success!";
             statusText.style.color = "#00ff00";
