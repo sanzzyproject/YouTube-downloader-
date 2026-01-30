@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YT Downloader - Cyber Style</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="grid-bg"></div>
+    
+    <div class="container">
+        <header>
+            <h1>YT <span class="blue-text">DOWNLOADER</span></h1>
+            <p>Paste link, convert, download.</p>
+        </header>
+
+        <main>
+            <div class="card">
+                <div class="input-group">
+                    <input type="text" id="urlInput" placeholder="Paste YouTube URL here...">
+                </div>
+                
+                <div class="options">
+                    <label class="radio-container">MP3 (Audio)
+                        <input type="radio" name="format" value="mp3" checked>
+                        <span class="checkmark"></span>
+                    </label>
+                    <label class="radio-container">MP4 (Video)
+                        <input type="radio" name="format" value="mp4">
+                        <span class="checkmark"></span>
+                    </label>
+                </div>
+
+                <button id="convertBtn" onclick="processVideo()">CONVERT</button>
+
+                <div id="status" class="status-box hidden">
+                    <div class="loader"></div>
+                    <p id="statusText">Processing...</p>
+                </div>
+
+                <div id="result" class="result-box hidden">
+                    <h3 id="videoTitle">Title Here</h3>
+                    <a id="downloadLink" href="#" target="_blank" class="download-btn">DOWNLOAD NOW</a>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Powered by Node.js & Vercel</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
